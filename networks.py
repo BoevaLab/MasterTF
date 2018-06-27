@@ -36,7 +36,7 @@ def firstselect(liste,thresh,graph):
                     x.append(n)
                     cpt+=1
         i+=1
-    return x,i
+    return x
 
 def main():
 
@@ -106,43 +106,43 @@ def main():
             G.node[n]['IsTF']='no'    
     
              
-    selected = sorted(select, key=lambda tup: tup[1])
-    tfname, outsc = zip(*selected)
-    colors=[]
-    place1=[]
-    name1=[]
-    for i in tfname:
-        if i=="GATA3" or i=="HAND1" or i=="HAND2" or i=="KLF7" or i=="ISL1" or i=="PHOX2B": #i=="ZNF281" or i=="NANOG" or i=="POU5F1" or i=="SOX2":
-            colors.append('r')
-            place1.append(tfname.index(i))
-            name1.append(i)
-        else:
-            colors.append('b')
-    indices = np.arange(len(selected))
-    plt.figure()
-    plt.bar(indices, outsc, color=colors)
-    plt.xticks(place1, name1, rotation='vertical')
-    plt.tight_layout()
-    plt.show(block=False)     
-    
-    selected2 = sorted(select2, key=lambda tup: tup[1])
-    tfname2, autow = zip(*selected2)
-    colors2=[]
-    place2=[]
-    name2=[]
-    for i in tfname2:
-        if i=="GATA3" or i=="HAND1" or i=="HAND2" or i=="KLF7" or i=="ISL1" or i=="PHOX2B": #i=="ZNF281" or i=="NANOG" or i=="POU5F1" or i=="SOX2":
-            colors2.append('r')
-            place2.append(tfname2.index(i))
-            name2.append(i)
-        else:
-            colors2.append('b')
-    indices2 = np.arange(len(selected2))
-    plt.figure()
-    plt.bar(indices2, autow, color=colors2)
-    plt.xticks(place2, name2, rotation='vertical')
-    plt.tight_layout()
-    plt.show(block=False)
+#    selected = sorted(select, key=lambda tup: tup[1])
+#    tfname, outsc = zip(*selected)
+#    colors=[]
+#    place1=[]
+#    name1=[]
+#    for i in tfname:
+#        if i=="GATA3" or i=="HAND1" or i=="HAND2" or i=="KLF7" or i=="ISL1" or i=="PHOX2B": #i=="ZNF281" or i=="NANOG" or i=="POU5F1" or i=="SOX2":
+#            colors.append('r')
+#            place1.append(tfname.index(i))
+#            name1.append(i)
+#        else:
+#            colors.append('b')
+#    indices = np.arange(len(selected))
+#    plt.figure()
+#    plt.bar(indices, outsc, color=colors)
+#    plt.xticks(place1, name1, rotation='vertical')
+#    plt.tight_layout()
+#    plt.show(block=False)     
+#    
+#    selected2 = sorted(select2, key=lambda tup: tup[1])
+#    tfname2, autow = zip(*selected2)
+#    colors2=[]
+#    place2=[]
+#    name2=[]
+#    for i in tfname2:
+#        if i=="GATA3" or i=="HAND1" or i=="HAND2" or i=="KLF7" or i=="ISL1" or i=="PHOX2B": #i=="ZNF281" or i=="NANOG" or i=="POU5F1" or i=="SOX2":
+#            colors2.append('r')
+#            place2.append(tfname2.index(i))
+#            name2.append(i)
+#        else:
+#            colors2.append('b')
+#    indices2 = np.arange(len(selected2))
+#    plt.figure()
+#    plt.bar(indices2, autow, color=colors2)
+#    plt.xticks(place2, name2, rotation='vertical')
+#    plt.tight_layout()
+#    plt.show(block=False)
    
 #    links2 = sorted(links, key=lambda tup: tup[1])
 #    lname, allinks = zip(*links2)
@@ -168,7 +168,7 @@ def main():
     print("finding cliques... 5/8")
     
     seuil=70
-    x,i = firstselect(select,seuil,G)
+    x = firstselect(select,seuil,G)
     Gc=nx.Graph()
     for n in x:
         Gc.add_node(n, inscore=G.node[n]['inscore'], outscore=G.node[n]['outscore'], IsTF='core')
@@ -176,29 +176,28 @@ def main():
             if (n,m) in G.edges and (m,n) in G.edges:
                 Gc.add_edge(n, m, site=G[n][m]['site'], peaks=G[n][m]['peaks'], 
                         motifs=G[n][m]['motifs'], weight=G[n][m]['weight'])
-#    Gclique=nx.find_cliques(Gc)
-#    a=len(list(Gclique))
-#                    
-#    while a < 25000:
-#        print(a, seuil)
-#        if a < 1000:
-#            seuil=seuil+10
-#        else:
-#            seuil=seuil+2
-#        x,i = firstselect((x,i),seuil,G)
-#        Gc.clear()
-#        for n in x:
-#            Gc.add_node(n, inscore=G.node[n]['inscore'], outscore=G.node[n]['outscore'], IsTF='core')
-#            for m in x:
-#                if (n,m) in G.edges and (m,n) in G.edges:
-#                    Gc.add_edge(n, m, site=G[n][m]['site'], peaks=G[n][m]['peaks'], 
-#                            motifs=G[n][m]['motifs'], weight=G[n][m]['weight'])
-#        print("graph done")
-#        Gclique=nx.find_cliques(Gc)
-#        a=len(list(Gclique))
+    Gclique=nx.find_cliques(Gc)
+    a=len(list(Gclique))
+                    
+    while a < 25000:
+        print(a, seuil)
+        if a < 1000:
+            seuil=seuil+10
+        else:
+            seuil=seuil+2
+        x = firstselect(x,seuil,G)
+        Gc.clear()
+        for n in x:
+            Gc.add_node(n, inscore=G.node[n]['inscore'], outscore=G.node[n]['outscore'], IsTF='core')
+            for m in x:
+                if (n,m) in G.edges and (m,n) in G.edges:
+                    Gc.add_edge(n, m, site=G[n][m]['site'], peaks=G[n][m]['peaks'], 
+                            motifs=G[n][m]['motifs'], weight=G[n][m]['weight'])
+        print("graph done")
+        Gclique=nx.find_cliques(Gc)
+        a=len(list(Gclique))
     
     print(x)
-    print(len(x), i-1)
     
     
     #    #out=[]

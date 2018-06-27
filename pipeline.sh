@@ -148,8 +148,6 @@ TADS_enhanc_fasta_output=$output_fasta/${file}.TADS.fa
 graph_output=$OUTDIR/${file}.gefx
 cross_output=$OUTDIR/${file}.cross.bed
 
-rm $OUTDIR/${file}.cross.bed.idx
-
 date
 echo "0. getting transcripts..."
 tail -n +8 $GencodeFile | awk '
@@ -224,6 +222,3 @@ echo "The Network files $graph_output 1, 2 and 3 are complete, you can visualize
 echo "The regulated genes files ${file}.gene_list.txt 1, 2 and 3 are complete"
 date
 
-########
-echo "8. comparing to Coltron..."
-python3 $SCRIPTPATH/stats.py $file $OUTDIR

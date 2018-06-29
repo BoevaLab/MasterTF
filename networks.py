@@ -33,7 +33,7 @@ def firstselect(liste,thresh,graph):
         for n,_ in liste:
             if (n,n) in graph.edges:
                 if graph.node[n]['outscore']*graph[n][n]['weight']>i and len(graph[n][n]['peaks'])>1 and graph[n][n]['site']!='prom':
-                    x.append(n)
+                    x.append((n,graph.node[n]['outscore']))
                     cpt+=1
         i+=1
     return x
@@ -144,24 +144,24 @@ def main():
 #    plt.tight_layout()
 #    plt.show(block=False)
    
-#    links2 = sorted(links, key=lambda tup: tup[1])
-#    lname, allinks = zip(*links2)
-#    colors=[]
-#    place=[]
-#    name=[]
-#    for i,j in lname:
-#        if (i=="NANOG" and (j=="POU5F1" or j=="SOX2")) or (i=="POU5F1" and j=="SOX2"):  #i=="GATA3" or i=="HAND1" or i=="HAND2" or i=="TWIST1" or i=="MYCN" or i=="PHOX2A" or i=="PHOX2B":
-#            colors.append('r')
-#            place.append(lname.index((i,j)))
-#            name.append((i,j))
-#        else:
-#            colors.append('b')
-#    indices = np.arange(len(links2))
-#    plt.figure()
-#    plt.bar(indices, allinks, color=colors)
-#    plt.xticks(place, name, rotation='vertical')
-#    plt.tight_layout()
-#    plt.show(block=False)
+    links2 = sorted(links, key=lambda tup: tup[1])
+    lname, allinks = zip(*links2)
+    colors=[]
+    place=[]
+    name=[]
+    for i,j in lname:
+        if (i=="NANOG" and (j=="POU5F1" or j=="SOX2")) or (i=="POU5F1" and j=="SOX2"):  #i=="GATA3" or i=="HAND1" or i=="HAND2" or i=="TWIST1" or i=="MYCN" or i=="PHOX2A" or i=="PHOX2B":
+            colors.append('r')
+            place.append(lname.index((i,j)))
+            name.append((i,j))
+        else:
+            colors.append('b')
+    indices = np.arange(len(links2))
+    plt.figure()
+    plt.bar(indices, allinks, color=colors)
+    plt.xticks(place, name, rotation='vertical')
+    plt.tight_layout()
+    plt.show(block=False)
     
     
     print(time.ctime())

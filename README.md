@@ -84,7 +84,7 @@ Optional :
 
 You can get a Protein-Protein Interaction file from STRING, and have it in the same format as 9606.protein.links.full.v10.5.filtered.txt. By setting the "-p" parameter to this file, and the "-n" parameter to True, the pipeline can now take into account non-direct TF binding to the DNA.
 
-Outputs :
+OUTPUT :
 
 In the outputDir folder :
 

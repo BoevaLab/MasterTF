@@ -83,3 +83,15 @@ SARUS is then used on these fasta files via the TFBS_finder.py script to do a mo
 Optional :
 
 You can get a Protein-Protein Interaction file from STRING, and have it in the same format as 9606.protein.links.full.v10.5.filtered.txt. By setting the "-p" parameter to this file, and the "-n" parameter to True, the pipeline can now take into account non-direct TF binding to the DNA.
+
+Outputs :
+
+In the outputDir folder :
+
+.gexf files, corresponding to the best cliques. Those files can be visualized using different softwares like Gephi https://gephi.org/.
+
+.summary.bed file, corresponding to all motifs found and their scores. This file can be visualized using IGV https://software.broadinstitute.org/software/igv/.
+
+In the imgDir folder (-m parameter) :
+
+6 .png files, corresponding to the 3 scores calculated for the cliques (means of outscore, autolink score and interconnectivity), and their distributions.

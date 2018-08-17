@@ -54,5 +54,10 @@ ATAC-Seq BE2C cells :
 
 
 METHOD :
-Optionnal
+The pipeline begins with the gencode.v19.annotation.gff3 file. It uses it to get only transcripts, find all the TSS, and output them in the gencode.v19.TSS.txt file.
+The pipeline begins with the .narrowPeak and .wig.bw files.
+
+
+
+Optionnal :
 Get a Protein-Protein Interaction file from STRING, and have it in the same format as 9606.protein.links.full.v10.5.filtered.txt.

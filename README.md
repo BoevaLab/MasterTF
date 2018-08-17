@@ -80,4 +80,4 @@ SARUS is then used on these fasta files via the TFBS_finder.py script to do a mo
 
 
 Optionnal :
-Get a Protein-Protein Interaction file from STRING, and have it in the same format as 9606.protein.links.full.v10.5.filtered.txt.
+You can get a Protein-Protein Interaction file from STRING, and have it in the same format as 9606.protein.links.full.v10.5.filtered.txt. By setting the "-p" parameter to this file, and the "-n" parameter to True, the pipeline can now take into account non-direct TF binding to the DNA.

@@ -51,3 +51,8 @@ ATAC-Seq KELLY cells :
 ATAC-Seq BE2C cells :
 
   https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM2113544
+
+
+METHOD :
+Optionnal
+Get a Protein-Protein Interaction file from STRING, and have it in the same format as 9606.protein.links.full.v10.5.filtered.txt.

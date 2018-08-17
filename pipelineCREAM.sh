@@ -245,6 +245,3 @@ echo "The Network files $graph_output 1, 2 and 3 are complete, you can visualize
 echo "The regulated genes files ${file}.gene_list.txt 1, 2 and 3 are complete"
 date
 
-########
-echo "8. comparing to Coltron..."
-python3 $SCRIPTPATH/stats.py $file $OUTDIR

@@ -16,26 +16,38 @@ ATAC.H1hES.50Kcells.rep1.bwa.q20.rmdup_peaks.narrowPeak.wig.bw
 
 Files used :
 Geo accession :
+
 ATAC-Seq K562 cells :
+
   https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1782764
   replicate 1: SRR2085918.sra
   https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1782765
   replicate 2: SRR2085919.sra
+
 ATAC-Seq G12878 cells :
+
   https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1155957
   replicate 1: SRR891268.sra
   https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1155958
   replicate 2: SRR891269.sra
   https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM1155959
   replicate 3: SRR891270.sra
+
 ATAC-Seq H1hES cells :
+
   https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM2264818
   replicate 1: SRR4011946.sra
   https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM2264819
   replicate 2: SRR4011947.sra
+
 ATAC-Seq NGP cells :
+
   https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM2113546
+
 ATAC-Seq KELLY cells :
+
   https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM2113545
+
 ATAC-Seq BE2C cells :
+
   https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM2113544

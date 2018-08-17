@@ -54,8 +54,28 @@ ATAC-Seq BE2C cells :
 
 
 METHOD :
-The pipeline begins with the gencode.v19.annotation.gff3 file. It uses it to get only transcripts, find all the TSS, and output them in the gencode.v19.TSS.txt file.
-The pipeline begins with the .narrowPeak and .wig.bw files.
+
+Before the beginning, the gencode.v19.annotation.gff3 file is used to get only transcripts, find all the transcripts TSS, and output them in the gencode.v19.TSS.txt file.
+
+From this file are deduced all the promoter regions, they are the regions from -750bp to +750bp around the TSS.
+
+The pipeline begins then with the .narrowPeak file. It is first filtered using the threshold parameter, only the 'best' peaks make it into the .prepared.bed file.
+
+CREAM is used on this file to find COREs.
+
+The promoter regions are used with the .prepared.bed file to find only the promoter peaks and output them in the .promoters.bed file, associated to the corresponding genes.
+
+The rest of the peaks are considered enhancers. 
+The ones that are in the hg19_enhancer_tss_associations_FANTOM5data.bed file are considered fantom5 enhancer peaks, and can be found in the .FANTOM5_enhanc.bed file, associated to the corresponding genes.
+The rest of the peaks are considered TADS enhancers, and are associated to all genes in the same TAD, using the allTADS.bed file. They can be found in the .TADS_enhanc.bed file.
+
+bedtools is used to make 3 fasta files corresponding to the promoters, fantom5 enhancers, and TAD enhancers.
+
+SARUS is then used on these fasta files via the TFBS_finder.py script to do a motif analysis. The results are in the 3 folders (promoters, fantom5 and TADS), one file by Transcription Factor Motif.
+
+
+
+
 
 
 

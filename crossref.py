@@ -34,11 +34,7 @@ def main():
     tads = open(sys.argv[3])
     TFBSDir = sys.argv[4]
     interaction = sys.argv[5]
-    #filep="../../results/outputDir/DNAse.H1hES.ENCODE_peaks.narrowPeak.promoters.bed"
-    #prom = open("../../results/outputDir/DNAse.H1hES.ENCODE_peaks.narrowPeak.promoters.bed")
-    #fant = open("../../results/outputDir/DNAse.H1hES.ENCODE_peaks.narrowPeak.FANTOM5_enhanc.bed")
-    #tads = open("../../results/outputDir/DNAse.H1hES.ENCODE_peaks.narrowPeak.TADS_enhanc.bed")
-    #TFBSDir = "../../results/outputDir/TFBS/"
+    
     genes_peaks_TFBS = {}
     peakchrom = {}
     TF_binding = {}
@@ -183,8 +179,8 @@ def main():
                             genes=peakchrom[peak]['genes']
                             aff=peak_binding[peak][tf][types][motif]['affscore']  #affinity score
                             if bw.stats(chrom,start+pos1,start+pos2,exact=True)[0]==None:   #position score
-                                pos=float(1/bw.values(chrom,start+mid,start+mid+1)[0])
-                            else:
+                                pos=float(1/bw.values(chrom,start+mid,start+mid+1)[0])      #this position score is higher if the motif is in the middle of the peak
+                            else:                                                           #rather than on the edge of the peak
                                 pos=float(bw.stats(chrom,start+pos1,start+pos2,exact=True)[0]/bw.values(chrom,start+mid,start+mid+1)[0])
                             score=pos*aff   #TFBS score
                             sens=peak_binding[peak][tf][types][motif]['sens']

@@ -10,8 +10,6 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-import math
-from scipy import stats as st
 import mmap
 from tqdm import *
 
@@ -34,7 +32,7 @@ def firstselect(thresh,graph):
         cpt=0
         for n in graph:
             if (n,n) in graph.edges:
-                if graph.node[n]['outscore']*graph[n][n]['weight']>i and len(graph[n][n]['peaks'])>1 and graph[n][n]['site']!='prom':
+                if graph.node[n]['outscore']*float(np.log2(0.001+(graph[n][n]['weight'])))>i and len(graph[n][n]['peaks'])>1 and graph[n][n]['site']!='prom':
                     x.append(n)
                     cpt+=1
         i+=0.1
@@ -44,12 +42,11 @@ def main():
 
     filep=sys.argv[1]       #summary file
     interaction=sys.argv[2]  #True or False
-    imgfolder=sys.argv[3]
-#    filep="/home/antoine/NAS_Public/data/projects/Antoine_Networks/results/outputDir/DNAse.H1hES.ENCODE_peaks.narrowPeak.summary.bed"
-#    interaction="False"
-#    ppifile="/".join(filep.split("/")[0:-1]).replace("results/outputDir","data")+("/9606.protein.links.full.v10.5.filtered.txt")
+    imgfolder=sys.argv[3]   #folder to save plots
     filec=filep.replace("summary.bed","fprepared.bed")
-
+    
+    cliquenum=sys.argv[4]
+    
     corepeaks=set()
     namefile=filep.split("/")[-1].replace("_peaks.narrowPeak.summary.bed","")
     nameppi='noPPI'   #name used for the png files
@@ -60,7 +57,7 @@ def main():
     
     if interaction=='True':  #argv[2], whether or not PPI are used
         edgethresh=1
-        ppifile=sys.argv[4]
+        ppifile=sys.argv[5]
         nameppi='PPI150'
         interact={}
             
@@ -289,11 +286,11 @@ def main():
         if n in TF_binding:
             for j in Ggraph:
                 if (n,j) in Ggraph.edges():
-                    links.append((((n,j)),float(np.log2(0.001+(Ggraph[n][j]['weight']/len(Ggraph))))))
+                    links.append((((n,j)),Ggraph[n][j]['weight']/len(Ggraph)))
     
             if (n,n) in Ggraph.edges():
                 select.append((n,Ggraph.node[n]['outscore']/len(Ggraph)))
-#                if float(np.log2(0.001+(Ggraph[n][n]['weight'])))>0:
+    #                if float(np.log2(0.001+(Ggraph[n][n]['weight'])))>0:
                 select2.append((n,G[n][n]['weight']/len(Ggraph)))
     
     ### PLOT OUTSCORE         
@@ -371,12 +368,6 @@ def main():
     
     
     score={}
-    clique1=[]
-    clique2=[]
-    clique3=[]
-    maxi1=0
-    maxi2=0
-    maxi3=0
     i=0
     
     print(time.ctime())
@@ -399,6 +390,12 @@ def main():
     #maxA=max(listA)
     #maxO=max(listO)
     
+    listCscores=[]
+    bestcliques=[]
+    for i in range(int(cliquenum)):
+        listCscores.append(0)
+        bestcliques.append(0)
+    
     Gclique=nx.find_cliques(Gc)
     ### Finding the 3 best cliques
     for n in Gclique:
@@ -410,33 +407,29 @@ def main():
         tmpout=((sum(G.node[m]['outscore'] for m in n))/len(n))    #mean of Outscores
         
     #    Cscore = math.sqrt((1-tmpout)**2+(1-tmpauto)**2+(1-tmps)**2)
-        Cscore=tmps*tmpauto*tmpout 
+        Cscore=tmps+tmpauto+tmpout 
         
         ### Find a way to combine those 3 scores into a single clique score (Cscore)
         ### Probably could be improved
         
-        if Cscore>maxi3:
-            if Cscore>maxi2:
-                if Cscore>maxi1:
-                    maxi3=maxi2
-                    clique3=clique2
-                    maxi2=maxi1
-                    clique2=clique1
-                    maxi1=Cscore
-                    clique1=n
-                else:
-                    maxi3=maxi2
-                    clique3=clique2
-                    maxi2=Cscore
-                    clique2=n
-            else:
-                maxi3=Cscore
-                clique3=n
+        if len(listCscores)>1:
+            for i in range(len(listCscores)-1):
+                if Cscore>listCscores[i]:
+                    if Cscore<listCscores[i+1]:
+                        listCscores[i]=Cscore
+                        bestcliques[i]=n
+                    else:
+                        if i == len(listCscores)-2:
+                            listCscores[i+1]=Cscore
+                            bestcliques[i+1]=n
+        else:
+            if Cscore>listCscores[0]:
+                listCscores[0]=Cscore
+                bestcliques[0]=n
     
-    bestclique=[clique1,clique2,clique3]
     listclique=[]
            
-    listclique=bestclique  #remove this line if using subnetworks
+    listclique=bestcliques  #remove this line if using subnetworks
     ###  SUBNETWORKS (not working)
     #    for n in bestclique:
     #        tmps=((sum(G[m1][m2]['weight'] for m1 in n for m2 in n))/(len(n)*(len(n)-1)))
@@ -502,7 +495,6 @@ def main():
     ### SUBNETWORKS   
     
     
-    
     print(time.ctime())
     print("finding most regulated genes... 7/8")    
     reg={}
@@ -519,34 +511,8 @@ def main():
                         reg[p][m]['score']+=G[n][m]['weight']
                     else:
                         reg[p][m]['score']=G[n][m]['weight']
-                        
-    
-    ### Directed Networks corresponding to the 3 best cliques
-    ### Can be exported to be visualized by gephi
-    Gcl1=nx.DiGraph()
-    for n in clique1:
-        Gcl1.add_node(n, inscore=G.node[n]['inscore'], outscore=G.node[n]['outscore'], IsTF='core')
-        G.node[n]['IsTF']='core'
-        for m in clique1:
-            Gcl1.add_edge(n, m, site=G[n][m]['site'], peaks=len(G[n][m]['peaks']), 
-                            weight=G[n][m]['weight'])
-    
-    Gcl2=nx.DiGraph()
-    for n in clique2:
-        Gcl2.add_node(n, inscore=G.node[n]['inscore'], outscore=G.node[n]['outscore'], IsTF='core')
-        G.node[n]['IsTF']='core'
-        for m in clique2:
-            Gcl2.add_edge(n, m, site=G[n][m]['site'], peaks=len(G[n][m]['peaks']), 
-                            weight=G[n][m]['weight'])
-            
-    Gcl3=nx.DiGraph()
-    for n in clique3:
-        Gcl3.add_node(n, inscore=G.node[n]['inscore'], outscore=G.node[n]['outscore'], IsTF='core')
-        G.node[n]['IsTF']='core'
-        for m in clique3:
-            Gcl3.add_edge(n, m, site=G[n][m]['site'], peaks=len(G[n][m]['peaks']), 
-                            weight=G[n][m]['weight']) 
-       
+               
+      
     
     ### Correlation to expression data (not working, not finished)
     #    d={}
@@ -590,18 +556,27 @@ def main():
     print(time.ctime())     
     print("writing files... 8/8")
     
+    ### Directed Networks corresponding to the best cliques
+    ### Can be exported to be visualized by gephi
+    
     Gsub_path=filep.replace(".summary.bed",".gene_list")
+    i=0
+    for cl in listclique:
+        i+=1
+        Gcl=nx.DiGraph()
+        for n in cl:
+            Gcl.add_node(n, inscore=G.node[n]['inscore'], outscore=G.node[n]['outscore'], IsTF='core')
+            G.node[n]['IsTF']='core'
+            for m in cl:
+                Gcl.add_edge(n, m, site=G[n][m]['site'], peaks=len(G[n][m]['peaks']), 
+                                weight=G[n][m]['weight'])
+                
+        nx.write_gexf(Gcl,Gsub_path+"."+str(i)+".gexf")
+    
     for n in reg:
         with open(Gsub_path+"."+str(n)+".txt","w") as file:
            for i in reg[n]:
                 file.write(i+"\t"+str(reg[n][i]['score'])+"\t"+G.node[i]['IsTF']+"\t"+','.join(reg[n][i]['liste'])+"\n")
-    
-    nx.write_gexf(Gcl1,Gsub_path+".1.gexf")
-    #nx.write_adjlist(Gcl1,Gsub_path+".1.adjlist")
-    nx.write_gexf(Gcl2,Gsub_path+".2.gexf")
-    #nx.write_adjlist(Gcl2,Gsub_path+".2.adjlist")
-    nx.write_gexf(Gcl3,Gsub_path+".3.gexf")
-    #nx.write_adjlist(Gcl3,Gsub_path+".3.adjlist")
     
     print(time.ctime())
     print("done !")

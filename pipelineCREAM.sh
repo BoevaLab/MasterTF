@@ -1,6 +1,6 @@
 #/usr/bin/env bash
 
-while getopts i:o:m:g:t:f:c:a:h:d:b:n:p: option
+while getopts i:o:m:g:t:f:c:a:h:d:b:n:p:q: option
 do
 case "${option}"
 in
@@ -17,6 +17,7 @@ d) PWMDIR=${OPTARG};;
 b) HOCOMOCOtoTF=${OPTARG};;
 n) interact=${OPTARG};;
 p) PPI=${OPTARG};;
+q) Cliques=${OPTARG};;
 esac
 done
 
@@ -114,6 +115,7 @@ echo "File with HOCOMOCO thresholds: $HOCOMOCOthresholds"
 echo "File with full HOCOMOCO annotations: $HOCOMOCOtoTF"
 echo "Use Protein-Protein Interaction: $interact"
 echo "PPI file : $PPI"
+echo "Finding the best $Cliques cliques"
 
 echo "TFhubsFinder create the output directory if it does not exist"
 
@@ -230,18 +232,18 @@ sort -k1,1 -k2n,2n -k4,4 $summ_output -o $summ_output
 
 if [ "$interact" = "True" ]
 then
-	python3 $SCRIPTPATH/networks.py $summ_output $interact $IMGDIR $PPI
+	python3 $SCRIPTPATH/networks.py $summ_output $interact $IMGDIR $Cliques $PPI
 else
-	python3 $SCRIPTPATH/networks.py $summ_output $interact $IMGDIR
+	python3 $SCRIPTPATH/networks.py $summ_output $interact $IMGDIR $Cliques
 fi
 
 echo "done!"
 
-LC_ALL=C sort -k2,2rg $OUTDIR/${file}.gene_list.1.txt -o $OUTDIR/${file}.gene_list.1.txt
-LC_ALL=C sort -k2,2rg $OUTDIR/${file}.gene_list.2.txt -o $OUTDIR/${file}.gene_list.2.txt
-LC_ALL=C sort -k2,2rg $OUTDIR/${file}.gene_list.3.txt -o $OUTDIR/${file}.gene_list.3.txt
+for regfile in $OUTDIR/${file}.gene_list.*.txt
+do
+    LC_ALL=C sort -k2,2rg $regfile -o $regfile
+done
 
-echo "The Network files $graph_output 1, 2 and 3 are complete, you can visualize them with Gephi"
-echo "The regulated genes files ${file}.gene_list.txt 1, 2 and 3 are complete"
+echo "The $Cliques different Network files $graph_output are complete, you can visualize them with Gephi"
+echo "The corresponding regulated genes files ${file}.gene_list.txt are complete"
 date
-

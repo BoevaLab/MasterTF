@@ -7,9 +7,11 @@
 5. python3 modules to install : networkX, glob, matplotlib, tqdm, numpy, pyBigWig
 
 To run :
-./pipelineCREAM.sh -i $file.narrowPeak -o outputDir -m imgDir -g gencode.v19.annotation.gff3 -t $threshold -f hg19_enhancer_tss_associations_FANTOM5data.bed -c allTADS.bed -a hg19.fa -h HOCOMOCOv11_core_standard_thresholds_HUMAN_mono.txt -d HOCOMOCOv11_core_pwm_HUMAN_mono_pwm/ -b HOCOMOCOv11_full_annotation_HUMAN_mono.tsv -n True/False -p ProteinLinksFile.txt
+./pipelineCREAM.sh -i $file.narrowPeak -o outputDir -m imgDir -g gencode.v19.annotation.gff3 -t $threshold -f hg19_enhancer_tss_associations_FANTOM5data.bed -c allTADS.bed -a hg19.fa -h HOCOMOCOv11_core_standard_thresholds_HUMAN_mono.txt -d HOCOMOCOv11_core_pwm_HUMAN_mono_pwm/ -b HOCOMOCOv11_full_annotation_HUMAN_mono.tsv -q 5 -n True/False -p ProteinLinksFile.txt
 
-$threshold can be calculated via a specific HMCan script
+-q : number of best cliques found by the algorithm, -n : True or False, using the Protein-Protein Interaction option or not 
+
+-t $threshold can be calculated via a specific HMCan script
 
 The BigWig file must have the exact same name as the narrowPeak file, for example :
 ATAC.H1hES.50Kcells.rep1.bwa.q20.rmdup_peaks.narrowPeak  and

@@ -7,7 +7,7 @@
 5. python3 modules to install : networkX, glob, matplotlib, tqdm, numpy, pyBigWig
 
 To run :
-./pipelineCREAM.sh -i $file.narrowPeak -o outputDir -m imgDir -g gencode.v19.annotation.gff3 -t $threshold -f hg19_enhancer_tss_associations_FANTOM5data.bed -c allTADS.bed -a hg19.fa -h HOCOMOCOv11_core_standard_thresholds_HUMAN_mono.txt -d HOCOMOCOv11_core_pwm_HUMAN_mono_pwm/ -b HOCOMOCOv11_full_annotation_HUMAN_mono.tsv -q 5 -n True/False -p ProteinLinksFile.txt
+./pipelineCREAM.sh -i $file.narrowPeak -o outputDir -m imgDir -g gencode.v19.annotation.gff3 -t $threshold -f hg19_enhancer_tss_associations_FANTOM5data.bed -c allTADS.bed -a hg19.fa -h HOCOMOCOv11_core_standard_thresholds_HUMAN_mono.txt -d HOCOMOCOv11_core_pwm_HUMAN_mono_pwm/ -b HOCOMOCOv11_full_annotation_HUMAN_mono.tsv -q 3 -n True/False -p ProteinLinksFile.txt
 
 -q : number of best cliques found by the algorithm, -n : True or False, using the Protein-Protein Interaction option or not 
 
@@ -76,11 +76,11 @@ bedtools is used to make 3 fasta files corresponding to the promoters, fantom5 e
 
 SARUS is then used on these fasta files via the TFBS_finder.py script to do a motif analysis. The results are in the 3 folders (promoters, fantom5 and TADS), one file by Transcription Factor Motif.
 
+The crossref.py script reads all these results, puts in one dictionary the peaks and the genes they are associated to, and in another dictionary the peaks and the TF motifs found inside them. These two informations are crossed in the .summary.bed file, where you can find which TF has a motif in which peak, in what position, with what probability of actually binding, and which genes are associated to this peak. If the probability of binding is too low (<0.1), the motif is disregarded.
 
+The networks.py script reads this summary file and builds a network, in which the nodes are genes and TFs, and the edges are the regulations between them. There is an edge between one TF and one gene (or another TF) if the binding motif of the TF is found in a peak associated to the gene. At this step you can use the Protein-Protein Interaction option to find links between a TF and a gene, even if the TF doesn't bind directly the DNA but forms a complex with another TF. Scores are then calculated for each edge and each node.
 
-
-
-
+A first selection is the used to find a list of the best TFs based on this scores, and then a clique analysis is used to find all the cliques of TFs within this list. The scores are plotted, and the X best cliques (-q parameter) are found. A list of the genes most regulated by the TFs of the clique is also generated.
 
 Optional :
 
@@ -91,6 +91,8 @@ OUTPUT :
 In the outputDir folder :
 
 .gexf files, corresponding to the best cliques. Those files can be visualized using different softwares like Gephi https://gephi.org/.
+
+.gene_list.txt, corresponding to the genes most regulated by the TFs of the clique.
 
 .summary.bed file, corresponding to all motifs found and their scores. This file can be visualized using IGV https://software.broadinstitute.org/software/igv/.
 
